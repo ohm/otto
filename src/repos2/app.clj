@@ -1,5 +1,6 @@
 (ns repos2.app
   (:require [repos2.config      :as config]
+            [repos2.user        :as user]
             [ring.adapter.jetty :as jetty :refer :all])
   (:gen-class :main true))
 
@@ -14,5 +15,5 @@
   []
   (let [o (config/orgs)
         p (config/port)
-        u (config/user)]
+        u (user/parse (config/user))]
     (run-jetty (make-handler-fn o u) {:port p})))

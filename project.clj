@@ -4,5 +4,6 @@
                  [ring/ring-core          "1.2.1"]
                  [ring/ring-jetty-adapter "1.2.1"]]
   :plugins [[lein-typed "0.3.1"]]
-  :core.typed {:check [repos2.config]}
+  :core.typed {:check [repos2.config
+                       repos2.user]}
   :main repos2.app)
