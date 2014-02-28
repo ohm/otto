@@ -11,7 +11,7 @@
 (defn parse-user
   [s]
   (let [[r n t] (s/split s #"\:")]
-    (assert (not (nil? r))) ;; TODO: this satisfies core.typed, but is verbose
-    (assert (not (nil? n)))
-    (assert (not (nil? t)))
+    (assert r)
+    (assert n)
+    (assert t)
     (->User r n t)))
