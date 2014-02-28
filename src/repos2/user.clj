@@ -7,8 +7,8 @@
                     token    :- String])
 (defrecord User [resource name token])
 
-(t/ann parse [String -> User])
-(defn parse
+(t/ann parse-user [String -> User])
+(defn parse-user
   [s]
   (let [[r n t] (s/split s #"\:")]
     (assert (not (nil? r))) ;; TODO: this satisfies core.typed, but is verbose

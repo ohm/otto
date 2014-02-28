@@ -1,13 +1,14 @@
 (ns repos2.config
   (:require [clojure.string     :as s]
-            [clojure.core.typed :as t]))
+            [clojure.core.typed :as t]
+            [repos2.user        :as u]))
 
 (t/ann env [String -> String])
 (defn- env
   [k]
-  (if-let [v (System/getenv k)]
-    v
-    (throw (Exception. (format "Missing environment variable %s." k)))))
+  (let [v (System/getenv k)]
+    (assert v)
+    v))
 
 (t/ann port [-> Integer])
 (defn port
@@ -20,7 +21,7 @@
   (let [v (env "ORGANIZATIONS")]
     (s/split v #";")))
 
-(t/ann user [-> String])
+(t/ann user [-> repos2.user.User])
 (defn user
   []
-  (env "USER"))
+  (u/parse-user (env "USER")))

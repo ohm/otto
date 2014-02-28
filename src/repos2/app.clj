@@ -15,5 +15,5 @@
   []
   (let [o (config/orgs)
         p (config/port)
-        u (user/parse (config/user))]
+        u (config/user)]
     (run-jetty (make-handler-fn o u) {:port p})))
