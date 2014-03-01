@@ -1,19 +1,13 @@
 (ns otto.app
   (:require [otto.config        :as config]
             [otto.user          :as user]
+            [otto.web           :as web]
             [ring.adapter.jetty :as jetty :refer :all])
   (:gen-class :main true))
-
-(defn make-handler-fn
-  [o u]
-  (fn [request]
-    {:status  200
-     :headers {"Content-Type" "text/html"}
-     :body    (format "User: %s - Organizations: %s" o u)}))
 
 (defn -main
   []
   (let [o (config/orgs)
         p (config/port)
-        u (config/user)]
-    (run-jetty (make-handler-fn o u) {:port p})))
+        _ (config/user)]
+    (run-jetty (web/make-handler-fn o) {:port p})))
