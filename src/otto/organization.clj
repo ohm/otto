@@ -1,4 +1,4 @@
-(ns repos2.organization
+(ns otto.organization
   (:require [clojure.string     :as s]
             [clojure.core.typed :as t]))
 

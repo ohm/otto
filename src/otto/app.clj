@@ -1,6 +1,6 @@
-(ns repos2.app
-  (:require [repos2.config      :as config]
-            [repos2.user        :as user]
+(ns otto.app
+  (:require [otto.config        :as config]
+            [otto.user          :as user]
             [ring.adapter.jetty :as jetty :refer :all])
   (:gen-class :main true))
 
