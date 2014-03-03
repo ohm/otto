@@ -4,6 +4,8 @@
             [otto.organization  :as o]
             [otto.user          :as u]))
 
+(t/def-alias OrganizationList (clojure.lang.IPersistentVector otto.organization.Organization))
+
 (t/ann env [String -> String])
 (defn- env
   [k]
@@ -16,7 +18,7 @@
   []
   (Integer/parseInt (env "PORT")))
 
-(t/ann orgs [-> (clojure.lang.IPersistentVector otto.organization.Organization)])
+(t/ann orgs [-> OrganizationList])
 (defn orgs
   []
   (let [v (env "ORGANIZATIONS")

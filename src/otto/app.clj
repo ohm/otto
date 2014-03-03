@@ -1,5 +1,6 @@
 (ns otto.app
   (:require [otto.config        :as config]
+            [otto.repositories  :as repos]
             [otto.user          :as user]
             [otto.web           :as web]
             [ring.adapter.jetty :as jetty :refer :all])
@@ -9,5 +10,6 @@
   []
   (let [o (config/orgs)
         p (config/port)
-        _ (config/user)]
-    (run-jetty (web/make-handler-fn o) {:port p})))
+        _ (config/user)
+        r (repos/make-repositories)]
+    (run-jetty (web/make-handler-fn o r) {:port p})))
