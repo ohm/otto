@@ -6,8 +6,9 @@
 (deftype RepositoryList
   [a]
   ARepositoryList
-  (items [this] a))
+  (items [this] @a))
 
 (defn make-repositories
   []
-  (->RepositoryList {}))
+  (let [repos (ref {})]
+    (->RepositoryList repos)))
