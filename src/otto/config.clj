@@ -13,10 +13,15 @@
     (assert v)
     v))
 
+(t/ann env-integer [String -> Integer])
+(defn- env-integer
+  [k]
+  (Integer/parseInt (env k)))
+
 (t/ann port [-> Integer])
 (defn port
   []
-  (Integer/parseInt (env "PORT")))
+  (env-integer "PORT"))
 
 (t/ann orgs [-> OrganizationList])
 (defn orgs
@@ -29,3 +34,8 @@
 (defn user
   []
   (u/parse-user (env "USER")))
+
+(t/ann interval [-> Integer])
+(defn interval
+  []
+  (env-integer "INTERVAL"))

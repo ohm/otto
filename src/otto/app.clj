@@ -11,5 +11,6 @@
   (let [o (config/orgs)
         p (config/port)
         _ (config/user)
+        i (config/interval)
         r (repos/make-repositories)]
     (run-jetty (web/make-handler-fn o r) {:port p})))
