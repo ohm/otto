@@ -1,10 +1,11 @@
 (ns otto.control
-  (:require [clojure.core.async :as async :refer [go <! timeout]]))
+  (:require [clojure.core.async :as async :refer [<! alts!! chan go timeout]]))
 
 (defn update-repositories
   [orgs user _repos]
-  (doseq [o orgs]
-    (println (format "Updating repositories for %s using user %s" o user))))
+  (let [r (chan)
+        t (timeout 1000)]
+    (println (alts!! [r t]))))
 
 (defn periodically-update
   [orgs user interval repos]
