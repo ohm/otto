@@ -1,11 +1,11 @@
 (ns otto.control
-  (:require [clojure.core.async :as async :refer [<! alts!! chan go timeout]]
+  (:require [clojure.core.async :as async :refer [<! alts!! chan close! go timeout]]
             [otto.github :as github]))
 
 (defn- update-repository
-  [repos r]
-  (println r)
-  (not (nil? r)))
+  [repos v k]
+  (println v k)
+  (not (nil? v)))
 
 (defn- update-repositories
   [orgs user update-fn]
@@ -14,13 +14,15 @@
     (doseq [o orgs]
       (github/fetch-repositories o user r))
     (loop []
-      (if (update-fn (first (alts!! [r t])))
-        (recur)))))
+      (if (update-fn (alts!! [r t]))
+        (recur)
+        (do (close! r)
+            (close! t))))))
 
 (defn periodically-update
   [orgs user interval repos]
-  (let [f (fn [r] (update-repository repos r))]
+  (let [update-fn #(apply update-repository repos %)]
     (go (loop []
           (<! (timeout interval))
-          (update-repositories orgs user f)
+          (update-repositories orgs user update-fn)
           (recur)))))
