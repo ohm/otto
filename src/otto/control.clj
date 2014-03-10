@@ -3,26 +3,26 @@
             [otto.github :as github]))
 
 (defn- update-repository
-  [repos v k]
-  (println v k)
-  (not (nil? v)))
+  [repos r]
+  (if (nil? r)
+    false
+    (do (println r)
+        true)))
 
 (defn- update-repositories
-  [orgs user update-fn]
+  [org user repo-fn]
   (let [r (chan)
         t (timeout 1000)]
-    (doseq [o orgs]
-      (github/fetch-repositories o user r))
+    (github/fetch-repositories org user r)
     (loop []
-      (if (update-fn (alts!! [r t]))
-        (recur)
-        (do (close! r)
-            (close! t))))))
+      (if (apply repo-fn (alts!! [r t]))
+        (recur)))))
 
 (defn periodically-update
   [orgs user interval repos]
-  (let [update-fn #(apply update-repository repos %)]
+  (doseq [o orgs]
     (go (loop []
           (<! (timeout interval))
-          (update-repositories orgs user update-fn)
+          (update-repositories o user (fn [r _]
+                                        (update-repository repos r)))
           (recur)))))
