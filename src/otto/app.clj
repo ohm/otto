@@ -14,5 +14,5 @@
         u (config/user)
         i (config/interval)
         r (repos/make-repositories)]
-    (control/periodically-update o u i r)
+    (control/periodically-update o u r i)
     (run-jetty (web/make-handler-fn o r) {:port p})))
