@@ -1,5 +1,5 @@
 (ns otto.github
-  (:require [clojure.core.async :as async :refer [<! >! go timeout]]))
+  (:require [clojure.core.async :as async :refer [<! >! chan go timeout]]))
 
 (defn- api-base-url
   [path]
@@ -10,8 +10,9 @@
   (api-base-url (format "orgs/%s/repos" (:name organization))))
 
 (defn fetch-repositories
-  [organization user ch]
-  (let [url (organization-repositories-url organization)]
-    (go
-      (<! (timeout (rand-int 100)))
-      (>! ch url))))
+  [organization user]
+  (let [results (chan)
+        url     (organization-repositories-url organization)]
+    (go (<! (timeout (rand-int 100)))
+        (>! results url))
+    results))

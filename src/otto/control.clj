@@ -12,9 +12,8 @@
 
 (defn- update-repositories
   [organization user repo-fn]
-  (let [r (chan)
+  (let [r (github/fetch-repositories organization user)
         t (timeout 1000)]
-    (github/fetch-repositories organization user r)
     (loop []
       (if (repo-fn (first (alts!! [r t])))
         (recur)))))
