@@ -2,6 +2,7 @@
   :dependencies [[org.clojure/clojure     "1.5.1"]
                  [org.clojure/core.async  "0.1.267.0-0d7780-alpha"]
                  [org.clojure/core.typed  "0.2.34"]
+                 [org.clojure/data.json   "0.2.4"]
                  [compojure               "1.1.3"]
                  [http-kit                "2.1.16"]
                  [ring/ring-core          "1.2.1"]

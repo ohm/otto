@@ -1,5 +1,6 @@
 (ns otto.github
-  (:require [clojure.core.async :as async :refer [<! >! chan go timeout]]
+  (:require [clojure.core.async :as async :refer [close! chan onto-chan]]
+            [clojure.data.json  :as json]
             [org.httpkit.client :as http]))
 
 (defn- api-base-url
@@ -12,7 +13,9 @@
 
 (defn fetch-repositories
   [organization user]
-  (let [results (chan)
-        url     (organization-repositories-url organization)]
-    (http/get url #(go (>! results %)))
-    results))
+  (let [ch  (chan)
+        url (organization-repositories-url organization)]
+    (http/get url (fn [{:keys [body error]}]
+                    (if error (close! ch)
+                              (onto-chan ch (json/read-str body)))))
+     ch))
