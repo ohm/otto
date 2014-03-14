@@ -1,7 +1,8 @@
 (ns otto.web
   (:require ;[clojure.core.typed :as t :refer :all]
             [compojure.core     :as c]
-            [ring.util.response :as r]))
+            [ring.util.response :as r]
+            [otto.html          :as html]))
 
 ;; (def-alias OrganizationList (clojure.lang.IPersistentVector otto.organization.Organization))
 
@@ -18,7 +19,7 @@
 (defn- show-organization
   [s]
   (let [r (:repositories s)]
-    (format "%s" (.items r))))
+    (html/organization-view (.items r))))
 
 ;; (ann make-handler-fn [OrganizationList -> [Any -> String]])
 (defn make-handler-fn

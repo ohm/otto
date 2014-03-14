@@ -4,6 +4,7 @@
                  [org.clojure/core.typed  "0.2.34"]
                  [org.clojure/data.json   "0.2.4"]
                  [compojure               "1.1.3"]
+                 [hiccup                  "1.0.5"]
                  [http-kit                "2.1.16"]
                  [ring/ring-core          "1.2.1"]
                  [ring/ring-jetty-adapter "1.2.1"]]
