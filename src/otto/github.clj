@@ -11,6 +11,20 @@
   [organization]
   (api-base-url (format "orgs/%s/repos" (:name organization))))
 
+(def repository-attributes
+  ["description"
+   "fork"
+   "html_url"
+   "language"
+   "name"
+   "private"
+   "pushed_at"])
+
+(defn- parse-repositories
+  [json]
+  (let [rs (json/read-str json)]
+    (map #(select-keys % repository-attributes) rs)))
+
 (defn fetch-repositories
   [organization user]
   (let [ch  (chan)
@@ -19,5 +33,5 @@
                     (go (if (or error (not= 200 status))
                           (do (println body)
                               (close! ch))
-                          (onto-chan ch (json/read-str body))))))
+                          (onto-chan ch (parse-repositories body))))))
      ch))

@@ -13,7 +13,7 @@
   (update
     [this organization repository-data]
     (let [k (str (:name organization) ":" (get repository-data "name"))]
-      (dosync (alter a assoc-in [k] {})))
+      (dosync (alter a assoc-in [k] repository-data)))
       true))
 
 (defn make-repositories
