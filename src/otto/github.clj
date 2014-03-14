@@ -1,5 +1,5 @@
 (ns otto.github
-  (:require [clojure.core.async :as async :refer [close! chan onto-chan]]
+  (:require [clojure.core.async :as async :refer [close! chan go onto-chan]]
             [clojure.data.json  :as json]
             [org.httpkit.client :as http]))
 
@@ -16,6 +16,6 @@
   (let [ch  (chan)
         url (organization-repositories-url organization)]
     (http/get url (fn [{:keys [body error]}]
-                    (if error (close! ch)
-                              (onto-chan ch (json/read-str body)))))
+                    (go (if error (close! ch)
+                                  (onto-chan ch (json/read-str body))))))
      ch))

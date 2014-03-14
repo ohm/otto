@@ -1,12 +1,20 @@
 (ns otto.repositories)
 
 (defprotocol ARepositoryList
-  (items [this]))
+  (items  [this])
+  (update [this organization repository]))
 
 (deftype RepositoryList
   [a]
   ARepositoryList
-  (items [this] @a))
+  (items
+    [this]
+    @a)
+  (update
+    [this organization repository-data]
+    (let [k (str (:name organization) ":" (get repository-data "name"))]
+      (dosync (alter a assoc-in [k] {})))
+      true))
 
 (defn make-repositories
   []

@@ -17,9 +17,8 @@
 ;; (ann show-organization [State -> String])
 (defn- show-organization
   [s]
-  (let [r (:repositories s)
-        o (first (:organizations s))]
-    (format "%s - %s" (:name o) (.items r))))
+  (let [r (:repositories s)]
+    (format "%s" (.items r))))
 
 ;; (ann make-handler-fn [OrganizationList -> [Any -> String]])
 (defn make-handler-fn
