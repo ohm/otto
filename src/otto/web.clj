@@ -18,8 +18,9 @@
 ;; (ann show-organization [State -> String])
 (defn- show-organization
   [s]
-  (let [r (:repositories s)]
-    (html/organization-view (.items r))))
+  (let [o (first (:organizations s))
+        r (:repositories s)]
+    (html/organization-view (.items r o))))
 
 ;; (ann make-handler-fn [OrganizationList -> [Any -> String]])
 (defn make-handler-fn

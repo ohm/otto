@@ -7,15 +7,17 @@
     [o n]))
 
 (defprotocol ARepositoryList
-  (items  [this])
+  (items  [this organization])
   (update [this organization repository]))
 
 (deftype RepositoryList
   [a]
   ARepositoryList
   (items
-    [this]
-    @a)
+    [this organization]
+    (filter (fn [[k v]]
+              (let [[o n] k]
+                (= (:name organization) o))) @a))
   (update
     [this organization repository-data]
     (let [k (repository-key organization repository-data)]
