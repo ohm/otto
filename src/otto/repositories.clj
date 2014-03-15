@@ -1,5 +1,11 @@
 (ns otto.repositories)
 
+(defn- repository-key
+  [organization repository-data]
+  (let [o (:name organization)
+        n (get repository-data "name")]
+    [o n]))
+
 (defprotocol ARepositoryList
   (items  [this])
   (update [this organization repository]))
@@ -12,7 +18,7 @@
     @a)
   (update
     [this organization repository-data]
-    (let [k (str (:name organization) ":" (get repository-data "name"))]
+    (let [k (repository-key organization repository-data)]
       (dosync (alter a assoc-in [k] repository-data)))
       true))
 
