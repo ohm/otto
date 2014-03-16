@@ -10,7 +10,7 @@
   (if (empty? repositories)
     [:p "Listing currently unavailable."]
     [:ul (for [[_ repository-data] repositories]
-           [:li (get repository-data "name")])]))
+           [:li (:name repository-data)])]))
 
 (defn organization-view
   [repositories]

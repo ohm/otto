@@ -1,7 +1,8 @@
 (ns otto.github
   (:require [clojure.core.async :as async :refer [close! chan go onto-chan]]
             [clojure.data.json  :as json]
-            [org.httpkit.client :as http]))
+            [org.httpkit.client :as http]
+            [otto.repositories  :as repositories]))
 
 (defn- api-base-url
   [path]
@@ -11,19 +12,10 @@
   [organization]
   (api-base-url (format "orgs/%s/repos" (:name organization))))
 
-(def repository-attributes
-  ["description"
-   "fork"
-   "html_url"
-   "language"
-   "name"
-   "private"
-   "pushed_at"])
-
 (defn- parse-repositories
   [json]
-  (let [rs (json/read-str json)]
-    (map #(select-keys % repository-attributes) rs)))
+  (let [rs (json/read-str json :key-fn keyword)]
+    (map repositories/make-repository rs)))
 
 (defn fetch-repositories
   [organization user]

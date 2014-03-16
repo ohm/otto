@@ -3,7 +3,7 @@
 (defn- repository-key
   [organization repository-data]
   (let [o (:name organization)
-        n (get repository-data "name")]
+        n (:name repository-data)]
     [o n]))
 
 (defprotocol ARepositoryList
@@ -23,6 +23,16 @@
     (let [k (repository-key organization repository-data)]
       (dosync (alter a assoc-in [k] repository-data)))
       true))
+
+(defn make-repository
+  [attributes]
+  (select-keys attributes [:description
+                           :fork
+                           :html_url
+                           :language
+                           :name
+                           :private
+                           :pushed_at]))
 
 (defn make-repositories
   []
