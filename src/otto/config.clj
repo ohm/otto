@@ -28,7 +28,7 @@
   []
   (let [v (env "ORGANIZATIONS")
         o (s/split v #"\;")]
-    (into [] (map o/parse-organization o))))
+    (vec (map o/parse-organization o))))
 
 (t/ann user [-> otto.user.User])
 (defn user

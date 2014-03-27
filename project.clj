@@ -8,8 +8,8 @@
                  [http-kit                "2.1.16"]
                  [ring/ring-core          "1.2.1"]
                  [ring/ring-jetty-adapter "1.2.1"]]
-
-  :plugins [[lein-typed "0.3.1"]]
+  :plugins [[lein-kibit "0.0.8"]
+            [lein-typed "0.3.1"]]
   :core.typed {:check [otto.config
                        otto.organization
                        otto.user]}
