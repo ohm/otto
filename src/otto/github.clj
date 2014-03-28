@@ -1,5 +1,5 @@
 (ns otto.github
-  (:require [clojure.core.async :as async :refer [close! chan go onto-chan]]
+  (:require [clojure.core.async :as async :refer [>! <! chan go]]
             [clojure.data.json  :as json]
             [org.httpkit.client :as http]
             [otto.repositories  :as repositories]))
@@ -12,18 +12,42 @@
   [organization]
   (api-base-url (format "orgs/%s/repos" (:name organization))))
 
-(defn- parse-repositories
-  [json]
-  (let [rs (json/read-str json :key-fn keyword)]
-    (map repositories/make-repository rs)))
+(defn- make-http-get-fn
+  [_user]
+  (fn [url response-fn]
+    (http/get url {} response-fn)))
 
-(defn fetch-repositories
-  [organization user]
-  (let [ch  (chan)
-        url (organization-repositories-url organization)]
-    (http/get url (fn [{:keys [body error status]}]
-                    (go (if (or error (not= 200 status))
-                          (do (println body)
-                              (close! ch))
-                          (onto-chan ch (parse-repositories body))))))
-     ch))
+(defn- next-href
+  [headers]
+  nil) ;; TODO
+
+(defn- make-response-fn
+  [success-fn]
+  (fn [{:keys [body error headers status]}]
+    (if (and (nil? error) (= 200 status))
+      (let [next-url (next-href headers)]
+        (success-fn body next-url))))) ;; TODO error
+
+(defn- make-json-response-fn
+  [success-fn]
+  (make-response-fn (fn [body next-url]
+                      (let [json (json/read-str body :key-fn keyword)]
+                        (success-fn json next-url)))))
+
+(defn- make-json-collection-fn
+  [request-chan item-fn]
+  (make-json-response-fn (fn [items next-url]
+                           (go (if-not (nil? next-url)
+                                  (>! request-chan next-url))
+                               (doseq [i items] (item-fn i))))))
+
+(defn fetch-organization-repositories
+  [organization user repository-fn]
+  (let [request-chan (chan 1)
+        http-get-fn  (make-http-get-fn user)
+        response-fn  (make-json-collection-fn request-chan repository-fn)]
+    (go (>! request-chan (organization-repositories-url organization))
+        (loop []
+          (if-let [url (<! request-chan)]
+            (do (http-get-fn url response-fn)
+                (recur)))))))

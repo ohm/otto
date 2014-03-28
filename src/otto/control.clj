@@ -6,14 +6,11 @@
 
 (defn- make-update-repository-fn
   [repositories]
-  (fn [o r]
-    (if (nil? r)
-      false
-      (.update repositories o r))))
+  println)
 
 (defn- update-repositories
   [organization user repo-fn]
-  (let [r (github/fetch-repositories organization user)
+  (let [r (github/fetch-organization-repositories organization user repo-fn)
         t (timeout update-repositories-timeout)]
     (loop []
       (if (repo-fn organization (first (alts!! [r t])))
