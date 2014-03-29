@@ -2,7 +2,7 @@
   (:require [clojure.core.async :as async :refer [>! <! chan go]]
             [clojure.data.json  :as json]
             [org.httpkit.client :as http]
-            [otto.repositories  :as repositories]))
+            [otto.repositories  :as repositories :refer [make-repository]]))
 
 (defn- api-base-url
   [path]
@@ -38,14 +38,20 @@
   [request-chan item-fn]
   (make-json-response-fn (fn [items next-url]
                            (go (if-not (nil? next-url)
-                                  (>! request-chan next-url))
+                                 (>! request-chan next-url))
                                (doseq [i items] (item-fn i))))))
+
+(defn- make-repositories-fn
+  [request-chan item-fn]
+  (make-json-collection-fn request-chan (fn [item]
+                                          (let [r (make-repository item)]
+                                            (item-fn r)))))
 
 (defn fetch-organization-repositories
   [organization user repository-fn]
   (let [request-chan (chan 1)
         http-get-fn  (make-http-get-fn user)
-        response-fn  (make-json-collection-fn request-chan repository-fn)]
+        response-fn  (make-repositories-fn request-chan repository-fn)]
     (go (>! request-chan (organization-repositories-url organization))
         (loop []
           (if-let [url (<! request-chan)]
