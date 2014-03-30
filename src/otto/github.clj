@@ -47,7 +47,7 @@
                                           (let [r (make-repository item)]
                                             (item-fn r)))))
 
-(defn fetch-organization-repositories
+(defn fetch-repositories
   [organization user repository-fn]
   (let [request-chan (chan 1)
         http-get-fn  (make-http-get-fn user)
