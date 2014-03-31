@@ -17,15 +17,15 @@
   (fn [url response-fn]
     (http/get url {} response-fn)))
 
-(defn- next-href
-  [headers]
-  nil) ;; TODO
-
 (defn- make-response-fn
   [success-fn]
   (fn [{:keys [body error headers status]}]
     (if (and (nil? error) (= 200 status))
-      (let [next-url (next-href headers)]
+      (let [next-url (->> (:link headers)
+                          str
+                          (re-find #"<([^\s]+)>;\s?rel=\"next\"")
+                          vec
+                          last)]
         (success-fn body next-url))))) ;; TODO error
 
 (defn- make-json-response-fn
@@ -49,8 +49,8 @@
 
 (defn fetch-repositories
   [organization user repository-fn]
-  (let [request-chan (chan 1)
-        http-get-fn  (make-http-get-fn user)
+  (let [http-get-fn  (make-http-get-fn user)
+        request-chan (chan 1)
         response-fn  (make-repositories-fn request-chan repository-fn)]
     (go (>! request-chan (organization-repositories-url organization))
         (loop []
