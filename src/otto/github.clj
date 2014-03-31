@@ -13,9 +13,9 @@
   (api-base-url (format "orgs/%s/repos" (:name organization))))
 
 (defn- make-http-get-fn
-  [_user]
+  [user]
   (fn [url response-fn]
-    (http/get url {} response-fn)))
+    (http/get url {:basic-auth [(:name user) (:token user)]} response-fn)))
 
 (defn- make-response-fn
   [success-fn]
