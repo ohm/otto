@@ -10,7 +10,7 @@
 
 (defn- organization-repositories-url
   [organization]
-  (api-base-url (format "orgs/%s/repos" (:name organization))))
+  (api-base-url (format "orgs/%s/repos?per_page=%d" (:name organization) 100)))
 
 (defn- make-http-get-fn
   [user]
