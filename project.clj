@@ -1,5 +1,5 @@
 (defproject otto "0.1.0-SNAPSHOT"
-  :dependencies [[org.clojure/clojure     "1.5.1"]
+  :dependencies [[org.clojure/clojure     "1.6.0"]
                  [org.clojure/core.async  "0.1.267.0-0d7780-alpha"]
                  [org.clojure/core.typed  "0.2.34"]
                  [org.clojure/data.json   "0.2.4"]
