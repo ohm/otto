@@ -17,15 +17,19 @@
   (fn [url response-fn]
     (http/get url {:basic-auth [(:name user) (:token user)]} response-fn)))
 
+(defn- next-url
+  [headers]
+  (->> (:link headers)
+       str
+       (re-find #"<([^\s]+)>;\s?rel=\"next\"")
+       vec
+       last))
+
 (defn- make-response-fn
   [success-fn]
   (fn [{:keys [body error headers status]}]
     (if (and (nil? error) (= 200 status))
-      (let [next-url (->> (:link headers)
-                          str
-                          (re-find #"<([^\s]+)>;\s?rel=\"next\"")
-                          vec
-                          last)]
+      (let [next-url (next-url headers)]
         (success-fn body next-url))))) ;; TODO error
 
 (defn- make-json-response-fn
