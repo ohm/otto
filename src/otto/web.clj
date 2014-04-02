@@ -17,14 +17,21 @@
 
 ;; (ann show-organization [State -> String])
 (defn- show-organization
-  [s]
-  (let [o (first (:organizations s))
-        r (:repositories s)]
-    (html/organization-view (.items r o))))
+  ([state]
+   (let [organization-name (:name (first (:organizations state)))]
+     (show-organization state organization-name)))
+   ([state organization-name]
+     (if-let [organization (->> (:organizations state)
+                                (filter #(= (:name %) organization-name))
+                                first)]
+       (html/organization-view (.items (:repositories state) organization))))) ;; TODO else
 
 ;; (ann make-handler-fn [OrganizationList -> [Any -> String]])
 (defn make-handler-fn
   [o r]
   (let [s (make-state o r)]
     (c/defroutes web-routes
-      (c/GET "/" [] (show-organization s)))))
+      (c/GET "/:organization" [organization]
+             (show-organization s organization))
+      (c/GET "/" []
+             (show-organization s)))))
