@@ -13,13 +13,11 @@
 (deftype RepositoryList
   [a]
   ARepositoryList
-  (items
-    [this organization]
+  (items [this organization]
     (filter (fn [[k v]]
               (let [[o n] k]
                 (= (:name organization) o))) @a))
-  (update
-    [this organization repository-data]
+  (update [this organization repository-data]
     (let [k (repository-key organization repository-data)]
       (dosync (alter a assoc-in [k] repository-data)))
       true))

@@ -12,11 +12,13 @@
   ([state]
    (let [organization-name (:name (first (:organizations state)))]
      (show-organization state organization-name)))
-   ([state organization-name]
-     (if-let [organization (->> (:organizations state)
+  ([state organization-name]
+   (let [organizations (:organizations state)
+         repositories  (:repositories  state)]
+     (if-let [organization (->> organizations
                                 (filter #(= (:name %) organization-name))
                                 first)]
-       (html/organization-view (.items (:repositories state) organization))))) ;; TODO else
+       (html/organization-view (.items repositories organization))))))
 
 (defn make-handler-fn
   [o r]
