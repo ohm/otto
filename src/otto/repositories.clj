@@ -36,5 +36,5 @@
 
 (defn make-repositories
   []
-  (let [repos (ref {})]
+  (let [repos (ref (sorted-map))]
     (->RepositoryList repos)))
