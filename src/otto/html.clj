@@ -26,7 +26,7 @@
 (defn- repository-collection
   [repositories]
   (if (empty? repositories)
-    [:p "Listing currently unavailable."]
+    [:div.alert.alert-danger "Listing currently unavailable."]
     [:table.table.table-condensed
      [:thead
       [:tr
