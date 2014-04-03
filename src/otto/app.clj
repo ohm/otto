@@ -12,7 +12,7 @@
   [organizations user repositories interval]
   (doseq [o organizations]
     (thread (loop []
-              (logger/debug (format "Updating organization %s" (:name o)))
+              (logger/info (format "Updating organization %s" (:name o)))
               (github/fetch-repositories o user #(.update repositories o %))
               (<!! (timeout interval))
               (recur)))))

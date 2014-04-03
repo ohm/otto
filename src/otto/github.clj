@@ -16,7 +16,7 @@
 (defn- make-http-get-fn
   [user]
   (fn [url response-fn]
-    (logger/info url)
+    (logger/debug (format "Fetching %s" url))
     (http/get url {:basic-auth [(:name user) (:token user)]} response-fn)))
 
 (defn- parse-next-url
