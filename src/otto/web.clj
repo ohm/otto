@@ -18,7 +18,9 @@
      (if-let [organization (->> organizations
                                 (filter #(= (:name %) organization-name))
                                 first)]
-       (html/organization-view (.items repositories organization))))))
+       (html/organization-view organizations
+                               organization
+                               (.items repositories organization))))))
 
 (defn make-handler-fn
   [o r]
