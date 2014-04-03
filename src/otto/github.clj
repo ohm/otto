@@ -1,8 +1,9 @@
 (ns otto.github
-  (:require [clojure.core.async :as async :refer [>! <! chan go]]
-            [clojure.data.json  :as json]
-            [org.httpkit.client :as http]
-            [otto.repositories  :as repositories :refer [make-repository]]))
+  (:require [clojure.core.async    :as async :refer [>! <! chan go]]
+            [clojure.data.json     :as json]
+            [clojure.tools.logging :as logger]
+            [org.httpkit.client    :as http]
+            [otto.repositories     :as repositories :refer [make-repository]]))
 
 (defn- api-base-url
   [path]
@@ -15,6 +16,7 @@
 (defn- make-http-get-fn
   [user]
   (fn [url response-fn]
+    (logger/info url)
     (http/get url {:basic-auth [(:name user) (:token user)]} response-fn)))
 
 (defn- parse-next-url
