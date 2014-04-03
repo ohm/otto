@@ -1,7 +1,9 @@
 (ns otto.web
-  (:require [compojure.core     :as c]
-            [ring.util.response :as r]
-            [otto.html          :as html]))
+  (:require [compojure.core               :as compojure]
+            [otto.html                    :as html]
+            [ring.middleware.content-type :as content-type]
+            [ring.middleware.not-modified :as not-modified]
+            [ring.middleware.resource     :as resource]))
 
 (defn- make-state
   [organizations repositories]
@@ -21,12 +23,18 @@
        (html/organization-view organizations
                                organization
                                (.items repositories organization))))))
+(defn- make-routes-fn
+  [state]
+  (compojure/defroutes web-routes
+    (compojure/GET "/:organization-name" [organization-name]
+      (show-organization state organization-name))
+    (compojure/GET "/" []
+      (show-organization state))))
 
 (defn make-handler-fn
-  [o r]
-  (let [s (make-state o r)]
-    (c/defroutes web-routes
-      (c/GET "/:organization" [organization]
-             (show-organization s organization))
-      (c/GET "/" []
-             (show-organization s)))))
+  [organizations repositories]
+  (let [state (make-state organizations repositories)]
+    (-> (make-routes-fn state)
+        (resource/wrap-resource "public")
+        (content-type/wrap-content-type)
+        (not-modified/wrap-not-modified))))
