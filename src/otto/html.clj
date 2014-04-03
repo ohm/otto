@@ -30,14 +30,20 @@
   [repositories]
   (if (empty? repositories)
     [:p "Listing currently unavailable."]
-    [:table (for [[_ repository] repositories]
-              [:tr (if (= true (:private repository))
+    [:table
+     [:thead [:tr [:th "Name"]
+                  [:th "Description"]
+                  [:th "Language"]
+                  [:th "Date"]]]
+     [:tbody (for [[_ repository] repositories]
+               [:tr (if (= true (:private repository))
                      {:class "private"})
-               [:td (:name repository)
+               [:td [:a {:href (:html_url repository)} (:name repository)]]
+               [:td (format-string (:description repository))
                     (if (= true (:fork repository))
                       [:span {:class "fork"} "fork"])]
                [:td (format-string (:language repository))]
-               [:td (format-date (:pushed_at repository))]])]))
+               [:td (format-date (:pushed_at repository))]])]]))
 
 (defn organization-view
   [organizations organization repositories]
