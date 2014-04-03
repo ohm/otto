@@ -1,17 +1,18 @@
 (ns otto.app
-  (:require [otto.config        :as config]
-            [otto.github        :as github]
-            [otto.repositories  :as repos]
-            [otto.user          :as user]
-            [otto.web           :as web]
-            [clojure.core.async :as async :refer [<!! thread timeout]]
-            [ring.adapter.jetty :as jetty :refer :all])
+  (:require [clojure.tools.logging :as logger]
+            [otto.config           :as config]
+            [otto.github           :as github]
+            [otto.repositories     :as repos]
+            [otto.web              :as web]
+            [clojure.core.async    :as async :refer [<!! thread timeout]]
+            [ring.adapter.jetty    :as jetty :refer :all])
   (:gen-class :main true))
 
 (defn periodically-update
   [organizations user repositories interval]
   (doseq [o organizations]
     (thread (loop []
+              (logger/debug (format "Updating organization %s" (:name o)))
               (github/fetch-repositories o user #(.update repositories o %))
               (<!! (timeout interval))
               (recur)))))
