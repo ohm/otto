@@ -11,14 +11,33 @@
               (let [n (:name o)]
                 [:li (if (= o current)
                        {:class "current"})
-                 [:a {:href (format "/%s" n)} n]])) organizations)])
+                 [:a {:href (format "/%s" n)} n]]))
+            organizations)])
+
+(defn- format-string
+  [string]
+  (if (clojure.string/blank? string)
+    "&ndash;"
+    string))
+
+(defn- format-date
+  [date]
+  (if (nil? date)
+    "&ndash;"
+    (.format (java.text.SimpleDateFormat. "dd-MM-yyyy") date)))
 
 (defn- repository-collection
   [repositories]
   (if (empty? repositories)
     [:p "Listing currently unavailable."]
-    [:ul (for [[_ repository-data] repositories]
-           [:li (:name repository-data)])]))
+    [:table (for [[_ repository] repositories]
+              [:tr (if (= true (:private repository))
+                     {:class "private"})
+               [:td (:name repository)
+                    (if (= true (:fork repository))
+                      [:span {:class "fork"} "fork"])]
+               [:td (format-string (:language repository))]
+               [:td (format-date (:pushed_at repository))]])]))
 
 (defn organization-view
   [organizations organization repositories]
