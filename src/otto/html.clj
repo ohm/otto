@@ -1,14 +1,15 @@
 (ns otto.html
-  (:require [hiccup.page :as hiccup]))
+  (:require [hiccup.element :as element :refer [link-to]]
+            [hiccup.page    :as page    :refer [html5 include-css]]))
 
 (defn- organization-navigation
   [organizations organization]
-  [:ul {:class "nav nav-tabs"}
+  [:ul.nav.nav-tabs
    (map (fn [o]
           (let [n (:name o)]
             [:li (if (= o organization)
                    {:class "active"})
-             [:a {:href (format "/%s" n)} n]])) organizations)])
+             (link-to (format "/%s" n) n)])) organizations)])
 
 (defn- format-string
   [string]
@@ -26,33 +27,32 @@
   [repositories]
   (if (empty? repositories)
     [:p "Listing currently unavailable."]
-    [:table {:class "table table-condensed"}
-     [:thead [:tr [:th "Name"]
-                  [:th "Description"]
-                  [:th "Language"]
-                  [:th "Date"]]]
-     [:tbody (for [[_ repository] repositories]
-               [:tr (if (= true (:private repository))
-                      {:class "active"})
-               [:td [:a {:href (:html_url repository)} (:name repository)]]
-               [:td (format-string (:description repository))
-                    "&nbsp;"
-                    (if (= true (:fork repository))
-                      [:span {:class "label label-default"} "fork"])]
-               [:td (format-string (:language repository))]
-               [:td {:class "date"}
-                (format-date (:pushed_at repository))]])]]))
+    [:table.table.table-condensed
+     [:thead
+      [:tr
+       [:th.name        "Name"]
+       [:th.description "Description"]
+       [:th.language    "Language"]
+       [:th.date        "Date"]]]
+     [:tbody
+      (for [[_ repository] repositories]
+        [:tr (if (= true (:private repository))
+               {:class "active"})
+         [:td (link-to (:html_url repository) (:name repository))]
+         [:td (format-string (:description repository))
+              "&nbsp;"
+              (if (= true (:fork repository))
+                [:span {:class "label label-default"} "fork"])]
+         [:td (format-string (:language repository))]
+         [:td.date (format-date (:pushed_at repository))]])]]))
 
 (defn organization-view
   [organizations organization repositories]
-  (hiccup/html5 [:head [:link {:href "/bootstrap.min.css"
-                               :rel  "stylesheet"
-                               :type "text/css"}]
-                       [:link {:href "/otto.css"
-                               :rel  "stylesheet"
-                               :type "text/css"}]]
-                [:body [:div {:class "container-fluid"}
-                        [:div {:class "page-header"}
-                         [:h1 "Repositories"]]
-                        (organization-navigation organizations organization)
-                        (repository-collection repositories)]]))
+  (html5 [:head
+          (include-css "bootstrap.min.css" "otto.css")]
+         [:body
+          [:div.container-fluid
+           [:div.page-header
+            [:h1 "Repositories"]]
+           (organization-navigation organizations organization)
+           (repository-collection repositories)]]))

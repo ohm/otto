@@ -1,1 +1,6 @@
-td.date { white-space: nowrap; }
+th.name          { width: 15%; }
+th.description   { width: 70%; }
+th.language      { width: 10%; }
+th.date, td.date { width: 5%;
+                   white-space: nowrap;
+                   text-align: right; }
