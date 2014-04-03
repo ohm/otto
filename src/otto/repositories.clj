@@ -19,8 +19,7 @@
                 (= (:name organization) o))) @a))
   (update [this organization repository-data]
     (let [k (repository-key organization repository-data)]
-      (dosync (alter a assoc-in [k] repository-data)))
-      true))
+      (dosync (alter a assoc-in [k] repository-data)))))
 
 (defn make-repository
   [attributes]
