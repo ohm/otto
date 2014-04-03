@@ -17,7 +17,7 @@
   (fn [url response-fn]
     (http/get url {:basic-auth [(:name user) (:token user)]} response-fn)))
 
-(defn- next-url
+(defn- parse-next-url
   [headers]
   (->> (:link headers)
        str
@@ -25,17 +25,27 @@
        vec
        last))
 
+(defn- parse-json-date
+  [date]
+  (if-not (clojure.string/blank? date)
+    (.parse (java.text.SimpleDateFormat. "yyyy-MM-dd'T'HH:mm:ss'Z'") date)))
+
+(defn- parse-json-val
+  [k v]
+  (if (= k :pushed_at) (parse-json-date v) v))
+
 (defn- make-response-fn
   [success-fn]
   (fn [{:keys [body error headers status]}]
     (if (and (nil? error) (= 200 status))
-      (let [next-url (next-url headers)]
+      (let [next-url (parse-next-url headers)]
         (success-fn body next-url))))) ;; TODO error
 
 (defn- make-json-response-fn
   [success-fn]
   (make-response-fn (fn [body next-url]
-                      (let [json (json/read-str body :key-fn keyword)]
+                      (let [json (json/read-str body :key-fn   keyword
+                                                     :value-fn parse-json-val)]
                         (success-fn json next-url)))))
 
 (defn- make-json-collection-fn
