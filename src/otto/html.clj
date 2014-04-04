@@ -41,16 +41,17 @@
     [:table.table.table-condensed
      [:thead
       [:tr
-       [:th.name        "Name"]
+       [:th.name "Name"]
        [:th.description "Description"]
-       [:th.language    "Language"]
-       [:th.date        "Date"]]]
+       [:th.language "Language"]
+       [:th.date "Date"]]]
      [:tbody (for [[_ repository] repositories]
                (repository-detail repository))]]))
 
 (defn organization-view
   [organizations organization repositories]
   (html5 [:head
+          [:title (format "[%s] Repositories" (:name organization))]
           (include-css "bootstrap.min.css" "otto.css")]
          [:body
           [:div.container-fluid
