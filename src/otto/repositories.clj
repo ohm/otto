@@ -16,10 +16,10 @@
   (items [this organization]
     (filter (fn [[k v]]
               (let [[o n] k]
-                (= (:name organization) o))) @a))
+                (= (:name organization) o))) (:repositories @a)))
   (update [this organization repository-data]
     (let [k (repository-key organization repository-data)]
-      (dosync (alter a assoc-in [k] repository-data)))))
+      (dosync (alter a assoc-in [:repositories k] repository-data)))))
 
 (defn make-repository
   [attributes]
@@ -33,5 +33,5 @@
 
 (defn make-repositories
   []
-  (let [repos (ref (sorted-map))]
+  (let [repos (ref {:repositories (sorted-map)})]
     (->RepositoryList repos)))
