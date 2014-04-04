@@ -1,11 +1,5 @@
 (ns otto.repositories)
 
-(defn- repository-key
-  [organization repository-data]
-  (let [o (:name organization)
-        n (:name repository-data)]
-    [o n]))
-
 (defprotocol ARepositoryList
   (items  [this organization])
   (update [this organization repository]))
@@ -14,14 +8,12 @@
   [a]
   ARepositoryList
   (items [this organization]
-    (filter (fn [[k v]]
-              (let [[o n] k]
-                (= (:name organization) o))) (:repositories @a)))
-  (update [this organization repository-data]
-    (let [k (repository-key organization repository-data)
+    (get @a organization))
+  (update [this organization repository]
+    (let [k (:name repository)
           t (System/currentTimeMillis)
-          v (assoc repository-data :_timestamp t)]
-      (dosync (alter a assoc-in [:repositories k] v)))))
+          v (assoc repository :_timestamp t)]
+      (dosync (alter a assoc-in [organization k] v)))))
 
 (defn make-repository
   [attributes]
@@ -34,6 +26,7 @@
                            :pushed_at]))
 
 (defn make-repositories
-  []
-  (let [repos (ref {:repositories (sorted-map)})]
-    (->RepositoryList repos)))
+  [organizations]
+  (let [repos (repeatedly (count organizations) sorted-map)
+        state (ref (zipmap organizations repos))]
+    (->RepositoryList state)))
