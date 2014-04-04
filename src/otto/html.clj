@@ -4,12 +4,11 @@
 
 (defn- organization-navigation
   [organizations organization]
-  [:ul.nav.nav-tabs
-   (map (fn [o]
-          (let [n (:name o)]
-            [:li (if (= o organization)
-                   {:class "active"})
-             (link-to (format "/%s" n) n)])) organizations)])
+  [:ul.nav.nav-tabs (map (fn [o]
+                           (let [n (:name o)]
+                             [:li (if (= o organization)
+                                    {:class "active"})
+                              (link-to (format "/%s" n) n)])) organizations)])
 
 (defn- format-string
   [string]
@@ -23,6 +22,18 @@
     "&ndash;"
     (.format (java.text.SimpleDateFormat. "dd-MM-yyyy") date)))
 
+(defn- repository-detail
+  [repository]
+  [:tr (if (= true (:private repository))
+         {:class "active"})
+   [:td (link-to (:html_url repository) (:name repository))]
+   [:td (format-string (:description repository))
+        "&nbsp;"
+        (if (= true (:fork repository))
+          [:span {:class "label label-default"} "fork"])]
+   [:td (format-string (:language repository))]
+   [:td.date (format-date (:pushed_at repository))]])
+
 (defn- repository-collection
   [repositories]
   (if (empty? repositories)
@@ -34,17 +45,8 @@
        [:th.description "Description"]
        [:th.language    "Language"]
        [:th.date        "Date"]]]
-     [:tbody
-      (for [[_ repository] repositories]
-        [:tr (if (= true (:private repository))
-               {:class "active"})
-         [:td (link-to (:html_url repository) (:name repository))]
-         [:td (format-string (:description repository))
-              "&nbsp;"
-              (if (= true (:fork repository))
-                [:span {:class "label label-default"} "fork"])]
-         [:td (format-string (:language repository))]
-         [:td.date (format-date (:pushed_at repository))]])]]))
+     [:tbody (for [[_ repository] repositories]
+               (repository-detail repository))]]))
 
 (defn organization-view
   [organizations organization repositories]

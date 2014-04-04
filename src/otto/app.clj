@@ -8,12 +8,17 @@
             [ring.adapter.jetty    :as jetty :refer :all])
   (:gen-class :main true))
 
+(defn- make-repository-update-fn
+  [repositories]
+  (fn [organization repository]
+    (.update repositories organization repository)))
+
 (defn periodically-update
-  [organizations user repositories interval]
+  [organizations user interval update-fn]
   (doseq [o organizations]
     (thread (loop []
               (logger/info (format "Updating organization %s" (:name o)))
-              (github/fetch-repositories o user #(.update repositories o %))
+              (github/fetch-repositories o user #(update-fn o %))
               (<!! (timeout interval))
               (recur)))))
 
@@ -24,5 +29,5 @@
         u (config/user)
         i (config/interval)
         r (repos/make-repositories)]
-    (periodically-update o u r i)
+    (periodically-update o u i (make-repository-update-fn r))
     (run-jetty (web/make-handler-fn o r) {:port p})))

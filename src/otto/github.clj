@@ -20,9 +20,8 @@
     (http/get url {:basic-auth [(:name user) (:token user)]} response-fn)))
 
 (defn- parse-next-url
-  [headers]
-  (->> (:link headers)
-       str
+  [link]
+  (->> (str link)
        (re-find #"<([^\s]+)>;\s?rel=\"next\"")
        vec
        last))
@@ -40,7 +39,7 @@
   [success-fn]
   (fn [{:keys [body error headers status]}]
     (if (and (nil? error) (= 200 status))
-      (let [next-url (parse-next-url headers)]
+      (let [next-url (parse-next-url (:link headers))]
         (success-fn body next-url))))) ;; TODO error
 
 (defn- make-json-response-fn
