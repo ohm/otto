@@ -18,8 +18,10 @@
               (let [[o n] k]
                 (= (:name organization) o))) (:repositories @a)))
   (update [this organization repository-data]
-    (let [k (repository-key organization repository-data)]
-      (dosync (alter a assoc-in [:repositories k] repository-data)))))
+    (let [k (repository-key organization repository-data)
+          t (System/currentTimeMillis)
+          v (assoc repository-data :_timestamp t)]
+      (dosync (alter a assoc-in [:repositories k] v)))))
 
 (defn make-repository
   [attributes]
