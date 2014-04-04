@@ -5,7 +5,7 @@
             [otto.repositories     :as repos]
             [otto.web              :as web]
             [clojure.core.async    :as async :refer [<!! thread timeout]]
-            [ring.adapter.jetty    :as jetty :refer :all])
+            [ring.adapter.jetty    :as jetty])
   (:gen-class :main true))
 
 (defn- make-repository-update-fn
@@ -28,6 +28,6 @@
         p (config/port)
         u (config/user)
         i (config/interval)
-        r (repos/make-repositories)]
+        r (repos/make-repositories o)]
     (periodically-update o u i (make-repository-update-fn r))
-    (run-jetty (web/make-handler-fn o r) {:port p})))
+    (jetty/run-jetty (web/make-handler-fn o r) {:port p})))
