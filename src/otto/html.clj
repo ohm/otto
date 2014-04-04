@@ -1,5 +1,6 @@
 (ns otto.html
-  (:require [hiccup.element :as element :refer [link-to]]
+  (:require [hiccup.core    :as core    :refer [h]]
+            [hiccup.element :as element :refer [link-to]]
             [hiccup.page    :as page    :refer [html5 include-css]]))
 
 (defn- organization-navigation
@@ -14,7 +15,7 @@
   [string]
   (if (clojure.string/blank? string)
     "&ndash;"
-    string))
+    (h string)))
 
 (defn- format-date
   [date]

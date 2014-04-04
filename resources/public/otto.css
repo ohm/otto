@@ -1,3 +1,4 @@
+table            { width: 100%; }
 th.name          { width: 15%; }
 th.description   { width: 70%; }
 th.language      { width: 10%; }
