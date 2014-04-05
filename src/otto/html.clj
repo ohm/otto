@@ -23,17 +23,24 @@
     "&ndash;"
     (.format (java.text.SimpleDateFormat. "dd-MM-yyyy") date)))
 
+(defn- repository-data-attributes
+  [fork private]
+  {:data-fork    (format "%s" fork)
+   :data-private (format "%s" private)})
+
 (defn- repository-detail
   [repository]
-  [:tr (if (= true (:private repository))
-         {:class "active"})
-   [:td (link-to (:html_url repository) (:name repository))]
-   [:td (format-string (:description repository))
-        "&nbsp;"
-        (if (= true (:fork repository))
-          [:span {:class "label label-default"} "fork"])]
-   [:td (format-string (:language repository))]
-   [:td.date (format-date (:pushed_at repository))]])
+  (let [fork    (:fork repository)
+        private (:private repository)]
+    [:tr (merge (if private {:class "active"}
+                            {}) (repository-data-attributes fork private))
+     [:td (link-to (:html_url repository) (:name repository))]
+     [:td (format-string (:description repository))
+          "&nbsp;"
+          (if (= true fork)
+            [:span {:class "label label-default"} "fork"])]
+     [:td (format-string (:language repository))]
+     [:td.date (format-date (:pushed_at repository))]]))
 
 (defn- repository-collection
   [repositories]
