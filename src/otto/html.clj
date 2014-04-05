@@ -1,15 +1,23 @@
 (ns otto.html
   (:require [hiccup.core    :as core    :refer [h]]
             [hiccup.element :as element :refer [link-to]]
-            [hiccup.page    :as page    :refer [html5 include-css]]))
+            [hiccup.page    :as page    :refer [html5 include-css include-js]]))
 
 (defn- organization-navigation
   [organizations organization]
-  [:ul.nav.nav-tabs (map (fn [o]
-                           (let [n (:name o)]
-                             [:li (if (= o organization)
-                                    {:class "active"})
-                              (link-to (format "/%s" n) n)])) organizations)])
+  [:div
+   [:form#filters
+    [:label.checkbox-inline
+     [:input {:checked true :type "checkbox" :value "fork"}]
+     "Forks"]
+    [:label.checkbox-inline
+     [:input {:checked true :type "checkbox" :value "private"}]
+     "Private"]]
+   [:ul.nav.nav-tabs (map (fn [o]
+                            (let [n (:name o)]
+                              [:li (if (= o organization)
+                                     {:class "active"})
+                               (link-to (format "/%s" n) n)])) organizations)]])
 
 (defn- format-string
   [string]
@@ -60,7 +68,8 @@
   [organizations organization repositories]
   (html5 [:head
           [:title (format "[%s] Repositories" (:name organization))]
-          (include-css "bootstrap.min.css" "otto.css")]
+          (include-css "bootstrap.min.css" "otto.css")
+          (include-js "jquery.min.js" "otto.js")]
          [:body
           [:div.container-fluid
            [:div.page-header
