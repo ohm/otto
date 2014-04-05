@@ -24,7 +24,11 @@
       [:div.checkbox
        [:label.checkbox-inline.navbar-link
         [:input {:checked true :type "checkbox" :value "private"}]
-        "&nbsp;Private"]]]]]])
+        "&nbsp;Private"]]
+      [:div.checkbox
+       [:label.checkbox-inline.navbar-link
+        [:input {:checked true :type "checkbox" :value "public"}]
+        "&nbsp;Public"]]]]]])
 
 (defn- format-string
   [string]
