@@ -3,21 +3,28 @@
             [hiccup.element :as element :refer [link-to]]
             [hiccup.page    :as page    :refer [html5 include-css include-js]]))
 
-(defn- organization-navigation
+(defn- navigation
   [organizations organization]
-  [:div
-   [:form#filters
-    [:label.checkbox-inline
-     [:input {:checked true :type "checkbox" :value "fork"}]
-     "Forks"]
-    [:label.checkbox-inline
-     [:input {:checked true :type "checkbox" :value "private"}]
-     "Private"]]
-   [:ul.nav.nav-tabs (map (fn [o]
-                            (let [n (:name o)]
-                              [:li (if (= o organization)
-                                     {:class "active"})
-                               (link-to (format "/%s" n) n)])) organizations)]])
+  [:div.navbar.navbar-inverse.navbar-fixed-top {:role "navigation"}
+   [:div.container-fluid
+    [:div.navbar-header
+     [:span.navbar-brand "Repositories"]]
+    [:div.collapse.navbar-collapse
+     [:ul.nav.navbar-nav (map (fn [o]
+                                (let [n (:name o)]
+                                  [:li (if (= o organization)
+                                         {:class "active"})
+                                    (link-to (format "/%s" n) n)]))
+                              organizations)]
+     [:form#filters.navbar-form {:role "form"}
+      [:div.checkbox
+       [:label.checkbox-inline.navbar-link
+        [:input {:checked true :type "checkbox" :value "fork"}]
+        "&nbsp;Forks"]]
+      [:div.checkbox
+       [:label.checkbox-inline.navbar-link
+        [:input {:checked true :type "checkbox" :value "private"}]
+        "&nbsp;Private"]]]]]])
 
 (defn- format-string
   [string]
@@ -72,7 +79,5 @@
           (include-js "jquery.min.js" "otto.js")]
          [:body
           [:div.container-fluid
-           [:div.page-header
-            [:h1 "Repositories"]]
-           (organization-navigation organizations organization)
+           (navigation organizations organization)
            (repository-collection repositories)]]))

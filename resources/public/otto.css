@@ -1,3 +1,4 @@
+body             { padding-top: 70px; }
 table            { width: 100%; }
 th.name          { width: 15%; }
 th.description   { width: 70%; }
@@ -5,3 +6,4 @@ th.language      { width: 10%; }
 th.date, td.date { width: 5%;
                    white-space: nowrap;
                    text-align: right; }
+div.checkbox     { padding-top: 6px; }
