@@ -6,6 +6,7 @@ Procfile
 *.clj
 .git
 .lein
+.m2
 deps
 resources
 src
