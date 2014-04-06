@@ -1,5 +1,8 @@
+LICENSE
 Makefile
 Procfile
+*.md
+*.org
 *.clj
 deps
 resources
