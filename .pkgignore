@@ -4,6 +4,8 @@ Procfile
 *.md
 *.org
 *.clj
+.git
+.lein
 deps
 resources
 src
