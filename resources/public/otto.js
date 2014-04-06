@@ -1,4 +1,7 @@
 $(function () {
+  /**
+   * Fork/Private/Public filters
+   */
   $("form#filters").change(function () {
     var _fork = false,
         _priv = false,
@@ -31,4 +34,30 @@ $(function () {
       return show ? elem.show() : elem.hide();
     });
   });
+
+  /**
+   * Simple search / string matching
+   */
+  var _searchTimeout = null;
+
+  $("input#search").keyup(function () {
+    if (_searchTimeout) {
+      clearTimeout(_searchTimeout);
+    };
+
+    var searchTerm = $(this).val();
+    setTimeout(function () {
+      $("table tbody tr").each(function () {
+        var elem = $(this),
+            show = true;
+
+        if (!RegExp(searchTerm, "i").test(elem.data("search"))) {
+          show = false;
+        }
+
+        return show ? elem.show() : elem.hide();
+      });
+    }, 100);
+  });
+
 });

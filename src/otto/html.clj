@@ -5,7 +5,7 @@
 
 (defn- navbar-filters
   [items]
-  [:form#filters.navbar-form {:role "filter"}
+  [:form#filters.navbar-form.navbar-left {:role "filter"}
    (map (fn [[k v]]
           [:div.checkbox
            [:label.checkbox-inline.navbar-link
@@ -25,7 +25,10 @@
                                          {:class "active"})
                                     (link-to (format "/%s" n) n)]))
                               organizations)]
-     (navbar-filters {:fork "Forks" :private "Private" :public "Public"})]]])
+     (navbar-filters {:fork "Forks" :private "Private" :public "Public"})
+     [:form#search.navbar-form.navbar-left {:role "search"}
+      [:div.form-group
+       [:input#search.form-control {:type "text" :placeholder "Search"}]]]]]])
 
 (defn- format-string
   [string]
@@ -40,18 +43,22 @@
     (.format (java.text.SimpleDateFormat. "dd-MM-yyyy") date)))
 
 (defn- repository-data-attributes
-  [fork private]
+  [name fork private search]
   {:data-fork    (format "%s" fork)
-   :data-private (format "%s" private)})
+   :data-private (format "%s" private)
+   :data-search  (format "%s %s" name search)})
 
 (defn- repository-detail
   [repository]
-  (let [fork    (:fork repository)
-        private (:private repository)]
+  (let [name        (:name repository)
+        fork        (:fork repository)
+        private     (:private repository)
+        description (:description repository)]
     [:tr (merge (if private {:class "active"}
-                            {}) (repository-data-attributes fork private))
-     [:td (link-to (:html_url repository) (:name repository))]
-     [:td (format-string (:description repository))
+                            {})
+                (repository-data-attributes name fork private description))
+     [:td (link-to (:html_url repository) name)]
+     [:td (format-string description)
           "&nbsp;"
           (if (= true fork)
             [:span {:class "label label-default"} "fork"])]
