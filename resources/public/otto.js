@@ -49,12 +49,15 @@ $(function () {
    */
   var searchTimeout = null;
 
-  $("input#search").keyup(function () {
-    if (searchTimeout !== null) {
-      clearTimeout(searchTimeout);
-    }
+  $("input#search")
+    .keyup(function () {
+      if (searchTimeout !== null) {
+        clearTimeout(searchTimeout);
+      }
 
-    searchTimeout = setTimeout(update, 100);
-    return;
-  });
+      searchTimeout = setTimeout(update, 100);
+      return;
+    })
+  .focus();
+
 });
