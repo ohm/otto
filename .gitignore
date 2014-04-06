@@ -1,5 +1,7 @@
 # directories
+deps
 target
 
 # files
 .env
+*.jar

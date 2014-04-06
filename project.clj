@@ -1,4 +1,5 @@
-(defproject otto "0.1.0-SNAPSHOT"
+(defproject otto "1.0.0"
+  :aot :all
   :dependencies [[org.clojure/clojure       "1.6.0"]
                  [org.clojure/core.async    "0.1.267.0-0d7780-alpha"]
                  [org.clojure/core.typed    "0.2.34"]
@@ -19,4 +20,6 @@
   :core.typed {:check [otto.config
                        otto.organization
                        otto.user]}
+  :jar-name "otto.jar"
+  :uberjar-name "otto-standalone.jar"
   :main otto.app)
