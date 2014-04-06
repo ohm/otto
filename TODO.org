@@ -1,0 +1,6 @@
+* Features
+- [ ] Allow sorting by columns
+- [ ] Include repository metadata
+
+* Bugs
+- [ ] Remove repositories that have been deleted
