@@ -3,6 +3,15 @@
             [hiccup.element :as element :refer [link-to]]
             [hiccup.page    :as page    :refer [html5 include-css include-js]]))
 
+(defn- navbar-filters
+  [items]
+  [:form#filters.navbar-form {:role "filter"}
+   (map (fn [[k v]]
+          [:div.checkbox
+           [:label.checkbox-inline.navbar-link
+            [:input {:checked true :type "checkbox" :value k}]
+            (format "&nbsp;%s" v)]]) items)])
+
 (defn- navigation
   [organizations organization]
   [:div.navbar.navbar-inverse.navbar-fixed-top {:role "navigation"}
@@ -16,19 +25,7 @@
                                          {:class "active"})
                                     (link-to (format "/%s" n) n)]))
                               organizations)]
-     [:form#filters.navbar-form {:role "form"}
-      [:div.checkbox
-       [:label.checkbox-inline.navbar-link
-        [:input {:checked true :type "checkbox" :value "fork"}]
-        "&nbsp;Forks"]]
-      [:div.checkbox
-       [:label.checkbox-inline.navbar-link
-        [:input {:checked true :type "checkbox" :value "private"}]
-        "&nbsp;Private"]]
-      [:div.checkbox
-       [:label.checkbox-inline.navbar-link
-        [:input {:checked true :type "checkbox" :value "public"}]
-        "&nbsp;Public"]]]]]])
+     (navbar-filters {:fork "Forks" :private "Private" :public "Public"})]]])
 
 (defn- format-string
   [string]
