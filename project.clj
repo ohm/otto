@@ -1,5 +1,6 @@
 (defproject otto "1.0.0"
   :aot :all
+  :license "Mozilla Public License Version 2.0"
   :dependencies [[org.clojure/clojure       "1.6.0"]
                  [org.clojure/core.async    "0.1.267.0-0d7780-alpha"]
                  [org.clojure/core.typed    "0.2.34"]
