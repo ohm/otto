@@ -39,3 +39,6 @@ $(deps)/jquery-$(jquery).min.js: $(deps)
 
 $(deps):
 	mkdir -p $(deps)
+
+# Build tool specific target.
+build: $(jar)

@@ -1,0 +1,7 @@
+Makefile
+Procfile
+*.clj
+deps
+resources
+src
+target
