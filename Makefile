@@ -3,13 +3,23 @@ deps      = $(CURDIR)/deps
 curl      = curl -fso
 bootstrap = 3.1.1
 lein      = 2.3.4
+jdk       = 8
 jquery    = 2.1.0
+
+# Bundle a JDK on Linux.
+ifeq ($(shell uname -s),Linux)
+	jdk_deps = $(deps)/jdk-$(jdk)
+	jdk_lein = PATH=$(deps)/jdk-$(jdk)/bin:$(PATH) $(deps)/lein-$(lein)
+else
+	jdk_deps =
+	jdk_lein = $(deps)/lein-$(lein)
+endif
 
 # Ensure the uberjar is built unconditionally.
 .PHONY: $(jar)
 
-$(jar): $(deps)/lein-$(lein) resources/public/bootstrap.min.css resources/public/jquery.min.js
-	$< uberjar && \
+$(jar): $(jdk_deps) $(deps)/lein-$(lein) resources/public/bootstrap.min.css resources/public/jquery.min.js
+	$(jdk_lein) uberjar && \
 		install target/otto-standalone.jar $@
 
 clean: $(deps)/lein-$(lein)
@@ -36,6 +46,12 @@ $(deps)/lein-$(lein): $(deps)
 
 $(deps)/jquery-$(jquery).min.js: $(deps)
 	$(curl) $@ http://code.jquery.com/jquery-$(jquery).min.js
+
+$(deps)/jdk-$(jdk): $(deps)
+	mkdir -p $@ && \
+		curl -s -L -C - -b "oraclelicense=accept-securebackup-cookie" \
+			http://download.oracle.com/otn-pub/java/jdk/8-b132/jdk-$(jdk)-linux-x64.tar.gz | \
+		tar xz -C $@ --strip-components=1
 
 $(deps):
 	mkdir -p $(deps)
