@@ -4,7 +4,7 @@
             [otto.github           :as github]
             [otto.repositories     :as repos]
             [otto.web              :as web]
-            [clojure.core.async    :as async :refer [<!! thread timeout]]
+            [clojure.core.async    :as async :refer [<! go timeout]]
             [ring.adapter.jetty    :as jetty])
   (:gen-class :main true))
 
@@ -16,11 +16,11 @@
 (defn periodically-update
   [organizations user interval update-fn]
   (doseq [o organizations]
-    (thread (loop []
-              (logger/info (format "Updating organization %s" (:name o)))
-              (github/fetch-repositories o user #(update-fn o %))
-              (<!! (timeout interval))
-              (recur)))))
+    (go (loop []
+          (logger/info (format "Updating organization %s" (:name o)))
+          (github/fetch-repositories o user #(update-fn o %))
+          (<! (timeout interval))
+          (recur)))))
 
 (defn -main
   []
