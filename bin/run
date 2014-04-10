@@ -1,0 +1,4 @@
+#!/bin/bash
+cd $(dirname ${0})/..
+[ -d ./jre/bin ] && export PATH=./jre/bin:$PATH
+exec java -server -Xmx32m -Xms32m -jar $1
