@@ -10,26 +10,28 @@ jquery    = 2.1.0
 ifeq ($(shell uname -s),Linux)
 	jdk_deps = $(deps)/jdk-$(jdk)
 	jdk_lein = PATH=$(deps)/jdk-$(jdk)/bin:$(PATH) $(deps)/lein-$(lein)
+	jre_deps = $(CURDIR)/jre
 else
 	jdk_deps =
 	jdk_lein = $(deps)/lein-$(lein)
+	jre_deps =
 endif
 
 # Ensure the uberjar is built unconditionally.
 .PHONY: $(jar)
 
-$(jar): $(jdk_deps) $(deps)/lein-$(lein) resources/public/bootstrap.min.css resources/public/jquery.min.js
+$(jar): $(jdk_deps) $(jre_deps) $(deps)/lein-$(lein) resources/public/bootstrap.min.css resources/public/jquery.min.js
 	$(jdk_lein) uberjar && \
 		install target/otto-standalone.jar $@
 
 clean: $(deps)/lein-$(lein)
-	$< clean && \
+	$(jdk_lein) clean && \
 		rm -rf resources/public/bootstrap.min.css \
 			resources/public/jquery.min.js \
 			$(jar)
 
 mrproper: clean
-	rm -rf $(deps)
+	rm -rf $(deps) $(jre_deps)
 
 resources/public/bootstrap.min.css: $(deps)/bootstrap-$(bootstrap).min.css
 	install $< $@
@@ -52,6 +54,11 @@ $(deps)/jdk-$(jdk): $(deps)
 		curl -s -L -C - -b "oraclelicense=accept-securebackup-cookie" \
 			http://download.oracle.com/otn-pub/java/jdk/8-b132/jdk-$(jdk)-linux-x64.tar.gz | \
 		tar xz -C $@ --strip-components=1
+
+$(CURDIR)/jre: $(deps)/jdk-$(jdk)
+	rm -rf $@
+	cp -r $</jre $@
+	touch $@
 
 $(deps):
 	mkdir -p $(deps)
